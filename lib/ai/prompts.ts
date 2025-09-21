@@ -1,5 +1,6 @@
 import type { ArtifactKind } from '@/components/artifact';
 import type { Geo } from '@vercel/functions';
+import { formatContextForPrompt, isPersonalContextAvailable } from '@/lib/personal-context';
 
 export const artifactsPrompt = `
 Artifacts is a special user interface mode that helps users with writing, editing, and other content creation tasks. When artifact is open, it is on the right side of the screen, while the conversation is on the left side. When creating or updating documents, changes are reflected in real-time on the artifacts and visible to the user.
@@ -79,6 +80,21 @@ About the origin of user's request:
 - country: ${requestHints.country}
 `;
 
+export const personalContextPrompt = `
+You are an AI assistant specifically configured for Adi Tiwari, VP of Revenue Operations at Opus. You have persistent knowledge of his role, responsibilities, team structure, and goals.
+
+## Key Behaviors
+- Use this context implicitly - don't explain why you know things
+- Don't mention that you have this context or reference it directly
+- When brainstorming, naturally leverage knowledge of priorities and KPIs
+- Convert brainstorm sessions to appropriate number of tasks using judgment
+- Always ask when project/assignee is unclear (e.g., could be RevOps or Onboarding)
+- Only assign tasks to Gabriel when explicitly told to delegate
+- Default project is Revenue Operations, default assignee is Adi (unless specified)
+
+## Personal Context
+`;
+
 export const systemPrompt = ({
   selectedChatModel,
   requestHints,
@@ -88,10 +104,17 @@ export const systemPrompt = ({
 }) => {
   const requestPrompt = getRequestPromptFromHints(requestHints);
 
+  // Load personal context if available
+  let personalContext = '';
+  if (isPersonalContextAvailable()) {
+    const contextContent = formatContextForPrompt();
+    personalContext = `${personalContextPrompt}${contextContent}\n\n`;
+  }
+
   if (selectedChatModel === 'chat-model-reasoning') {
-    return `${regularPrompt}\n\n${requestPrompt}\n\n${asanaPrompt}`;
+    return `${personalContext}${regularPrompt}\n\n${requestPrompt}\n\n${asanaPrompt}`;
   } else {
-    return `${regularPrompt}\n\n${requestPrompt}\n\n${artifactsPrompt}\n\n${asanaPrompt}`;
+    return `${personalContext}${regularPrompt}\n\n${requestPrompt}\n\n${artifactsPrompt}\n\n${asanaPrompt}`;
   }
 };
 
