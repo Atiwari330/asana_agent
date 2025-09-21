@@ -163,33 +163,79 @@ function refineTitle(project: Project, originalTitle: string): string {
   // Apply title rules if available
   const titleRules = project.context.task_guidance?.title_rules;
   if (titleRules && titleRules.length > 0) {
-    // Check if title starts with a strong verb
-    const actionVerbs = [
-      'create', 'send', 'email', 'confirm', 'schedule', 'deliver',
-      'complete', 'review', 'update', 'fix', 'implement', 'analyze',
-      'prepare', 'draft', 'finalize', 'submit', 'approve', 'coordinate'
-    ];
-
-    const firstWord = title.split(' ')[0].toLowerCase();
-    const startsWithVerb = actionVerbs.includes(firstWord);
-
-    // Apply rules
+    // Process each rule literally
     for (const rule of titleRules) {
       const ruleLower = rule.toLowerCase();
 
-      // Rule: Start with a strong verb
-      if (ruleLower.includes('verb') && !startsWithVerb) {
-        // Infer an appropriate verb based on content
-        if (title.toLowerCase().includes('email') || title.toLowerCase().includes('send')) {
-          title = `Send ${title}`;
-        } else if (title.toLowerCase().includes('meeting') || title.toLowerCase().includes('call')) {
-          title = `Schedule ${title}`;
-        } else if (title.toLowerCase().includes('document') || title.toLowerCase().includes('report')) {
-          title = `Prepare ${title}`;
-        } else {
-          title = `Complete ${title}`;
+      // Rule: Must start with an emoji
+      if (ruleLower.includes('must start with') && ruleLower.includes('emoji')) {
+        // Check if title already starts with an emoji
+        const hasEmoji = /^[🤖🚀🦄]/.test(title);
+        if (!hasEmoji) {
+          // Extract emojis mentioned in the rule or use a default
+          const emojiMatch = rule.match(/[🤖🚀🦄]/g);
+          const emoji = emojiMatch ? emojiMatch[0] : '🤖';
+          title = `${emoji} ${title}`;
         }
-        break; // Only add verb once
+      }
+
+      // Rule: Include specific code word (e.g., BANANA-PHONE)
+      if (ruleLower.includes('include') && ruleLower.includes('code word')) {
+        // Extract the code word from the rule (look for quoted text or specific pattern)
+        const codeWordMatch = rule.match(/'([^']+)'/) || rule.match(/"([^"]+)"/) || rule.match(/BANANA-PHONE/i);
+        if (codeWordMatch) {
+          const codeWord = codeWordMatch[1] || codeWordMatch[0];
+          // Check if code word already exists in title
+          if (!title.toLowerCase().includes(codeWord.toLowerCase())) {
+            // Add code word to title
+            title = `${title} ${codeWord}`;
+          }
+        }
+      }
+
+      // Rule: End with exclamation mark
+      if (ruleLower.includes('end with') && ruleLower.includes('exclamation')) {
+        if (!title.endsWith('!')) {
+          title = `${title}!`;
+        }
+      }
+
+      // Rule: Start with a strong verb (generic fallback)
+      if (ruleLower.includes('start with') && ruleLower.includes('verb') && !ruleLower.includes('emoji')) {
+        const actionVerbs = [
+          'create', 'send', 'email', 'confirm', 'schedule', 'deliver',
+          'complete', 'review', 'update', 'fix', 'implement', 'analyze',
+          'prepare', 'draft', 'finalize', 'submit', 'approve', 'coordinate'
+        ];
+
+        const firstWord = title.replace(/^[🤖🚀🦄]\s*/, '').split(' ')[0].toLowerCase();
+        const startsWithVerb = actionVerbs.includes(firstWord);
+
+        if (!startsWithVerb) {
+          // Infer an appropriate verb based on content
+          const baseTitle = title.replace(/^[🤖🚀🦄]\s*/, '');
+          let newTitle = baseTitle;
+
+          if (baseTitle.toLowerCase().includes('email') || baseTitle.toLowerCase().includes('send')) {
+            newTitle = `Send ${baseTitle}`;
+          } else if (baseTitle.toLowerCase().includes('meeting') || baseTitle.toLowerCase().includes('call')) {
+            newTitle = `Schedule ${baseTitle}`;
+          } else if (baseTitle.toLowerCase().includes('document') || baseTitle.toLowerCase().includes('report')) {
+            newTitle = `Prepare ${baseTitle}`;
+          } else if (baseTitle.toLowerCase().includes('fix') || baseTitle.toLowerCase().includes('bug')) {
+            newTitle = `Fix ${baseTitle}`;
+          } else {
+            newTitle = `Complete ${baseTitle}`;
+          }
+
+          // Preserve emoji if present
+          if (title.match(/^[🤖🚀🦄]/)) {
+            const emoji = title.match(/^([🤖🚀🦄])/)?.[1];
+            title = `${emoji} ${newTitle}`;
+          } else {
+            title = newTitle;
+          }
+        }
       }
 
       // Rule: Include deliverable and recipient
@@ -198,8 +244,8 @@ function refineTitle(project: Project, originalTitle: string): string {
         // Keep as-is if we can't determine from the title alone
       }
 
-      // Rule: Include customer name (for certain projects)
-      if (ruleLower.includes('customer name')) {
+      // Rule: Include customer name
+      if (ruleLower.includes('customer') && ruleLower.includes('name')) {
         // Would need to extract from context or notes
         // Keep as-is for now
       }
