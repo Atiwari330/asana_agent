@@ -62,6 +62,7 @@ Located in lib/ai/tools/:
 - **update-document**: Updates existing artifacts
 - **get-weather**: Weather API integration
 - **request-suggestions**: Generates follow-up suggestions
+- **asana-create-task**: Creates tasks in Asana with registry-based validation
 
 ### Streaming Architecture
 - Uses Vercel AI SDK's UIMessageStream with resumable streams (Redis-backed)
@@ -76,6 +77,7 @@ Required environment variables (.env.local):
 - `POSTGRES_URL`: Supabase PostgreSQL connection string
 - `REDIS_URL`: Redis connection for caching/streams (optional but recommended)
 - `BLOB_READ_WRITE_TOKEN`: Vercel Blob storage for file uploads (optional)
+- `ASANA_ACCESS_TOKEN`: Personal access token for Asana API integration
 
 ## Key Technical Decisions
 
@@ -103,3 +105,26 @@ When debugging:
 1. Check Redis connection for streaming issues
 2. Verify environment variables are properly set
 3. Use `pnpm db:studio` to inspect database state
+
+## Asana Integration
+
+### Configuration Files
+- **config/opus-registry.json**: Defines allowed projects, people, and routing rules
+- **config/adi-context.md**: Personal context for the AI assistant
+
+### Key Modules
+- **lib/asana.ts**: Minimal Asana API client with retry logic
+- **lib/asana-registry.ts**: Type-safe registry loader and alias resolution
+- **lib/personal-context.ts**: Loads and parses personal context for implicit knowledge
+
+### Personal Context System
+The AI has built-in awareness of Adi's role as VP of Revenue Operations at Opus:
+- Knows KPIs, responsibilities, and team structure implicitly
+- Uses context naturally without explaining why it knows things
+- Makes intelligent decisions about task creation and delegation
+- Asks for clarification when genuinely ambiguous (e.g., RevOps vs Onboarding project)
+
+### Testing
+- **Test Project**: "Test Project for Testing Asana Agent" with intentionally silly rules
+- **Verification**: Tasks should include emoji prefix, BANANA-PHONE code word, and contextual notes
+- See TESTING_GUIDE.md for comprehensive test scenarios
