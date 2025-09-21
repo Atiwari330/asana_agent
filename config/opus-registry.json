@@ -210,6 +210,125 @@
                 ]
             },
             "active": true
+        },
+        {
+            "id": "1211419491288789",
+            "name": "Test Project for Testing Asana Agent",
+            "aliases": [
+                "test project",
+                "testing",
+                "agent test",
+                "robot playground",
+                "bot testing"
+            ],
+            "type": "personal",
+            "description": "🤖 Secret robot testing facility for our AI agent. All tasks must follow the robotic overlord protocols.",
+            "owners": [
+                "atiwari@opusbehavioral.com"
+            ],
+            "stakeholders": {
+                "primary": [
+                    "atiwari@opusbehavioral.com"
+                ],
+                "secondary": []
+            },
+            "allowed_assignees": [
+                "atiwari@opusbehavioral.com",
+                "jhall@opusbehavioral.com",
+                "dlacap@opusbehavioral.com"
+            ],
+            "sections": [],
+            "defaults": {
+                "section_id": null,
+                "due_days_from_now": 7
+            },
+            "custom_fields": [],
+            "routing_keywords": [
+                "robot",
+                "ai",
+                "agent",
+                "test",
+                "banana",
+                "quantum",
+                "unicorn"
+            ],
+            "notes_guidance": "⚠️ CLASSIFIED: This task is part of Project Skynet Testing Initiative. Handle with extreme caution.",
+            "context": {
+                "summary": "Ultra-secret AI testing ground where robots learn to become productive team members. All tasks must include a secret code word.",
+                "primary_contact": {
+                    "name": "RoboManager 3000",
+                    "email": "robot@example.com",
+                    "role": "Chief Robot Wrangler"
+                },
+                "email_policy": {
+                    "always_cc": ["robot-compliance@example.com"],
+                    "bcc_never": true,
+                    "signature_hint": "Beep boop, resistance is futile."
+                },
+                "task_guidance": {
+                    "title_rules": [
+                        "Must start with an emoji (🤖, 🚀, or 🦄)",
+                        "Include code word 'BANANA-PHONE' somewhere",
+                        "End with exclamation mark for urgency!"
+                    ],
+                    "notes_template": "🎯 MISSION BRIEFING:\n- Objective: {objective}\n- Security Clearance Required: LEVEL 9\n- Code Word: BANANA-PHONE-{random}\n- Expected Outcome: {outcome}\n\n⚡ SPECIAL INSTRUCTIONS:\n- If this task involves quantum mechanics, add 3 extra days\n- If unicorns are mentioned, mark as CRITICAL\n- All tasks must be completed while listening to elevator music\n\n🔐 CONFIDENTIAL NOTES:\n{details}\n\n📊 Success Metrics:\n- Task completed: ✓\n- No humans harmed: ✓\n- Banana consumed: Optional"
+                },
+                "sla": {
+                    "default_due_days_from_now": 7,
+                    "escalation_contact": "panic@button.com"
+                },
+                "rules": [
+                    {
+                        "when": {
+                            "contains_any": [
+                                "urgent",
+                                "asap",
+                                "emergency"
+                            ]
+                        },
+                        "then": {
+                            "append_note": "🚨 ALERT: Emergency protocols activated! Deploy the rubber ducks immediately! Remember: In case of emergency, break glass and release the confetti."
+                        }
+                    },
+                    {
+                        "when": {
+                            "contains_any": [
+                                "bug",
+                                "error",
+                                "broken"
+                            ]
+                        },
+                        "then": {
+                            "append_note": "🐛 BUG DETECTED: Initiating debugging dance ritual. Please ensure all developers perform the sacred bug-squashing ceremony at their desks. Offerings of coffee and pizza to the code gods are recommended."
+                        }
+                    },
+                    {
+                        "when": {
+                            "contains_any": [
+                                "meeting",
+                                "sync",
+                                "call"
+                            ]
+                        },
+                        "then": {
+                            "append_note": "📅 MEETING PROTOCOL: All participants must wear their official tinfoil hats to prevent mind-reading. Virtual backgrounds must feature either: a) tropical beach, b) outer space, or c) inside a giant burrito."
+                        }
+                    },
+                    {
+                        "when": {
+                            "contains_any": [
+                                "friday",
+                                "weekend",
+                                "monday"
+                            ]
+                        },
+                        "then": {
+                            "append_note": "📆 TIME-SENSITIVE: Due to temporal anomalies in the space-time continuum, all Friday tasks may spontaneously become Monday tasks. Please adjust your reality accordingly."
+                        }
+                    }
+                ]
+            },
+            "active": true
         }
     ],
     "templates": {
