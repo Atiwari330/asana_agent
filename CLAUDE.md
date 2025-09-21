@@ -11,7 +11,7 @@ This is a Next.js AI chatbot application based on the Vercel AI Chatbot template
 ```bash
 # Development
 pnpm dev              # Start development server with turbo (http://localhost:3000)
-pnpm build           # Run migrations and build for production
+pnpm build           # Build for production (no migrations)
 pnpm start           # Start production server
 
 # Database Management
@@ -108,14 +108,47 @@ When debugging:
 
 ## Asana Integration
 
+### Operating Modes
+The AI operates in two distinct modes:
+1. **General Chat Mode (Default)**: Responds naturally to questions and discussions without creating tasks
+2. **Task Creation Mode**: Only activates with explicit "create task" or "add task" language
+3. **Context Awareness**: Always maintains knowledge of user's role, KPIs, and team structure implicitly
+
 ### Configuration Files
 - **config/opus-registry.json**: Defines allowed projects, people, and routing rules
+  - Projects include aliases, defaults, context rules, and templates
+  - People include email, aliases, and department info
+  - Routing keywords help suggest appropriate projects
 - **config/adi-context.md**: Personal context for the AI assistant
+  - User's role, responsibilities, and reporting structure
+  - KPIs, challenges, and current initiatives
+  - Team members and delegation patterns
 
 ### Key Modules
 - **lib/asana.ts**: Minimal Asana API client with retry logic
 - **lib/asana-registry.ts**: Type-safe registry loader and alias resolution
 - **lib/personal-context.ts**: Loads and parses personal context for implicit knowledge
+
+### Registry Structure
+```json
+{
+  "projects": [{
+    "id": "asana_project_id",
+    "name": "Project Name",
+    "aliases": ["shortname", "nickname"],
+    "allowed_assignees": ["email@company.com"],
+    "context": {
+      "task_guidance": { "title_rules": [], "notes_template": "" },
+      "rules": [{ "when": {}, "then": {} }]
+    }
+  }],
+  "people": [{
+    "email": "user@company.com",
+    "name": "Full Name",
+    "aliases": ["firstname", "nickname"]
+  }]
+}
+```
 
 ### Personal Context System
 The AI has built-in awareness of Adi's role as VP of Revenue Operations at Opus:
@@ -123,8 +156,61 @@ The AI has built-in awareness of Adi's role as VP of Revenue Operations at Opus:
 - Uses context naturally without explaining why it knows things
 - Makes intelligent decisions about task creation and delegation
 - Asks for clarification when genuinely ambiguous (e.g., RevOps vs Onboarding project)
+- Defaults: Project = Revenue Operations, Assignee = Adi (unless specified)
+
+### Updating Configuration
+- **Add Projects/People**: Edit `config/opus-registry.json`
+- **Update Personal Context**: Modify `config/adi-context.md`
+- **Add Aliases**: Include in respective arrays for flexible name matching
+- **Context Rules**: Add project-specific rules that transform titles and notes
 
 ### Testing
 - **Test Project**: "Test Project for Testing Asana Agent" with intentionally silly rules
 - **Verification**: Tasks should include emoji prefix, BANANA-PHONE code word, and contextual notes
 - See TESTING_GUIDE.md for comprehensive test scenarios
+
+## Troubleshooting
+
+### Common Issues
+1. **Database Migration Conflicts**:
+   - Error: "column already exists"
+   - Solution: Use `pnpm db:push` instead of `pnpm db:migrate` for schema sync
+
+2. **Asana Authentication Errors**:
+   - 401/403 errors indicate token issues
+   - Verify ASANA_ACCESS_TOKEN is valid and not expired
+   - Token needs access to workspace and projects
+
+3. **Personal Context Not Loading**:
+   - Check `config/adi-context.md` exists
+   - Verify markdown formatting is valid
+   - Check for file read permissions
+
+4. **Task Creation Failures**:
+   - "Project not found" - check project ID in registry
+   - "Person not found" - verify email/alias in registry
+   - "Not allowed" - check allowed_assignees for project
+
+5. **Rate Limiting**:
+   - Asana API has rate limits
+   - Tool implements automatic retry with backoff
+   - Wait a moment if seeing repeated failures
+
+## Development Tips
+
+### Adding New Tools
+1. Create tool in `lib/ai/tools/` following existing patterns
+2. Import and add to tools array in chat route
+3. Update system prompt if needed for tool awareness
+4. Test with personal context to ensure proper integration
+
+### Testing Context Injection
+1. Start dev server: `pnpm dev`
+2. Ask questions about your role/KPIs without providing context
+3. Verify AI demonstrates knowledge without explaining why
+4. Test task creation to see context-aware defaults
+
+### Debugging Context Loading
+- Add console.log in `lib/personal-context.ts`
+- Check browser console for errors
+- Verify context appears in system prompt (can log in chat route)
