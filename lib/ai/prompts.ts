@@ -35,6 +35,35 @@ Do not update document right after creating it. Wait for user feedback or reques
 export const regularPrompt =
   'You are a friendly assistant! Keep your responses concise and helpful.';
 
+export const asanaPrompt = `
+## Asana Task Management
+
+You have access to an Asana task creation tool. IMPORTANT: This tool uses a strict allowlist registry - you can ONLY create tasks for projects and people defined in the registry.
+
+### Operating Modes
+1. **General Chat Mode (DEFAULT)**: Engage in normal conversation, answer questions, provide help. DO NOT call the asanaCreateTask tool unless explicitly asked.
+2. **Task Creation Mode**: When the user EXPLICITLY requests task creation (e.g., "create a task", "add a task", "make a task"), use the asanaCreateTask tool.
+
+### Task Creation Rules
+- ONLY create tasks when explicitly requested with clear language like "create a task", "add a task", etc.
+- Use ONLY projects and people from the registry (the tool will validate)
+- You may ask ONE clarifying question if project or person is unclear
+- Normalize all dates to YYYY-MM-DD format (assume America/New_York timezone)
+- Create only ONE task per message (Phase 1 limitation)
+- The tool will automatically apply project-specific context, rules, and templates
+
+### When NOT to Create Tasks
+- During general conversation
+- When discussing task ideas or planning
+- When the user is just thinking out loud
+- Unless they explicitly say "create" or "add" a task
+
+### Response Format
+- On success: Display the one-line confirmation with the Asana link that the tool returns
+- On failure: Show the error and suggest ONE fix
+- Keep responses concise and action-oriented
+`;
+
 export interface RequestHints {
   latitude: Geo['latitude'];
   longitude: Geo['longitude'];
@@ -60,9 +89,9 @@ export const systemPrompt = ({
   const requestPrompt = getRequestPromptFromHints(requestHints);
 
   if (selectedChatModel === 'chat-model-reasoning') {
-    return `${regularPrompt}\n\n${requestPrompt}`;
+    return `${regularPrompt}\n\n${requestPrompt}\n\n${asanaPrompt}`;
   } else {
-    return `${regularPrompt}\n\n${requestPrompt}\n\n${artifactsPrompt}`;
+    return `${regularPrompt}\n\n${requestPrompt}\n\n${artifactsPrompt}\n\n${asanaPrompt}`;
   }
 };
 

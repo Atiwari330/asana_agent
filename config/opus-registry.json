@@ -1,0 +1,229 @@
+{
+    "version": "1.0",
+    "meta": {
+        "workspace_gid": "833401062973886",
+        "timezone": "America/New_York",
+        "date_format": "YYYY-MM-DD"
+    },
+    "policy": {
+        "allow_general_chat": true,
+        "one_task_per_message": true,
+        "on_unknown_project": "ask",
+        "on_unknown_person": "ask"
+    },
+    "defaults": {
+        "default_project_id": null,
+        "default_assignee_email": "atiwari@opusbehavioral.com",
+        "default_due_days_from_now": 3
+    },
+    "people": [
+        {
+            "email": "atiwari@opusbehavioral.com",
+            "name": "Adi Tiwari",
+            "aliases": [
+                "adi",
+                "me",
+                "myself"
+            ],
+            "role": "VP Operations",
+            "department": "Revenue Operations",
+            "active": true
+        },
+        {
+            "email": "jhall@opusbehavioral.com",
+            "name": "Janelle Hall",
+            "aliases": [
+                "janelle",
+                "jhall"
+            ],
+            "role": "Onboarding Director",
+            "department": "Implementation",
+            "active": true
+        },
+        {
+            "email": "dlacap@opusbehavioral.com",
+            "name": "Gabriel Lacap",
+            "aliases": [
+                "gabriel",
+                "gabe",
+                "dlacap"
+            ],
+            "role": "Team Member",
+            "department": "Operations",
+            "active": true
+        }
+    ],
+    "projects": [
+        {
+            "id": "1211317165447198",
+            "name": "Revenue Operations",
+            "aliases": [
+                "rev ops",
+                "revenue ops",
+                "my board"
+            ],
+            "type": "personal",
+            "description": "Adi’s internal ops and follow-ups.",
+            "owners": [
+                "atiwari@opusbehavioral.com"
+            ],
+            "stakeholders": {
+                "primary": [
+                    "atiwari@opusbehavioral.com"
+                ],
+                "secondary": []
+            },
+            "allowed_assignees": [
+                "atiwari@opusbehavioral.com"
+            ],
+            "sections": [
+                {
+                    "name": "Inbox",
+                    "id": "1211317343919352"
+                }
+            ],
+            "defaults": {
+                "section_id": "1211317343919352",
+                "due_days_from_now": 2
+            },
+            "custom_fields": [],
+            "routing_keywords": [
+                "leadership email",
+                "monthly accounting",
+                "ops"
+            ],
+            "notes_guidance": "Be concise; include acceptance criteria as bullets.",
+            "context": {
+                "summary": "Internal ops board for quick follow-ups.",
+                "primary_contact": {
+                    "name": "N/A",
+                    "email": "N/A",
+                    "role": "N/A"
+                },
+                "email_policy": {
+                    "always_cc": [],
+                    "bcc_never": true,
+                    "signature_hint": "Be brief and action-oriented."
+                },
+                "task_guidance": {
+                    "title_rules": [
+                        "Start with a strong verb",
+                        "Include deliverable and recipient (e.g., 'Email monthly accounting request to leadership')"
+                    ],
+                    "notes_template": "Goal:\n- {goal}\nKey details:\n- {details}\nAcceptance:\n- {acceptance_criteria}"
+                },
+                "sla": {
+                    "default_due_days_from_now": 2,
+                    "escalation_contact": "adi@example.com"
+                },
+                "rules": [
+                    {
+                        "when": {
+                            "contains_any": [
+                                "email",
+                                "follow up",
+                                "send"
+                            ]
+                        },
+                        "then": {
+                            "append_note": "Include any relevant links and the due date in the body; confirm CC list."
+                        }
+                    }
+                ]
+            },
+            "active": true
+        },
+        {
+            "id": "1211116494194833",
+            "name": "Onboarding Leadership",
+            "aliases": [
+                "onboarding",
+                "implementation",
+                "training",
+                "client onboarding"
+            ],
+            "type": "departmental",
+            "description": "Client onboarding: timelines, go-live readiness, hypercare.",
+            "owners": [
+                "jhall@opusbehavioral.com"
+            ],
+            "stakeholders": {
+                "primary": [
+                    "jhall@opusbehavioral.com"
+                ],
+                "secondary": [
+                    "atiwari@opusbehavioral.com"
+                ]
+            },
+            "allowed_assignees": [
+                "jhall@opusbehavioral.com",
+                "atiwari@opusbehavioral.com"
+            ],
+            "sections": [],
+            "defaults": {
+                "section_id": null,
+                "due_days_from_now": 5
+            },
+            "custom_fields": [],
+            "routing_keywords": [
+                "go-live",
+                "implementation",
+                "hypercare"
+            ],
+            "notes_guidance": "Include client name, target go-live, risks, and mitigations.",
+            "context": {
+                "summary": "All onboarding leadership actions and checkpoints.",
+                "primary_contact": {
+                    "name": "Janelle Hall",
+                    "email": "janelle@example.com",
+                    "role": "Onboarding Director"
+                },
+                "email_policy": {
+                    "always_cc": [],
+                    "bcc_never": true,
+                    "signature_hint": "Use clear dates and owners."
+                },
+                "task_guidance": {
+                    "title_rules": [
+                        "Include customer name",
+                        "Call out 'Confirm', 'Schedule', or 'Deliver'"
+                    ],
+                    "notes_template": "Customer: {customer}\nObjective: {objective}\nDependencies: {dependencies}\nAcceptance: {acceptance}"
+                },
+                "sla": {
+                    "default_due_days_from_now": 5,
+                    "escalation_contact": "adi@example.com"
+                },
+                "rules": [
+                    {
+                        "when": {
+                            "contains_any": [
+                                "go-live",
+                                "launch",
+                                "cutover"
+                            ]
+                        },
+                        "then": {
+                            "append_note": "Add checklist: data migration, eRx config, staff training dates."
+                        }
+                    }
+                ]
+            },
+            "active": true
+        }
+    ],
+    "templates": {
+        "demo_followup": {
+            "title_prefix": "Follow up — ",
+            "description_template": "Send recording + next steps.\nFocus: {focus}\nProposed date(s): {dates}"
+        },
+        "bug_report": {
+            "title_prefix": "BUG — ",
+            "description_template": "Customer: {customer}\nIssue: {issue}\nImpact: {impact}\nSteps: {steps}\nOwner: {owner}"
+        },
+        "prospect_research": {
+            "title_prefix": "Research — ",
+            "description_template": "Company: {company}\nCurrent stack: {stack}\nPain points: {pains}\nDecision timeline: {timeline}\nBudget: {budget}"
+        }
+    }
+}
