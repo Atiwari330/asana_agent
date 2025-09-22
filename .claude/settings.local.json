@@ -11,7 +11,8 @@
       "Bash(pnpm db:generate:*)",
       "WebSearch",
       "WebFetch(domain:www.npmjs.com)",
-      "Bash(pnpm add:*)"
+      "Bash(pnpm add:*)",
+      "Bash(git merge:*)"
     ],
     "deny": [],
     "ask": []
