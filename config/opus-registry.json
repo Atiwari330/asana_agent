@@ -51,6 +51,17 @@
             "role": "Team Member",
             "department": "Operations",
             "active": true
+        },
+        {
+            "email": "lgil@opusbehavioral.com",
+            "name": "Laura Gil",
+            "aliases": [
+                "laura",
+                "lgil"
+            ],
+            "role": "Onboarding Specialist",
+            "department": "Implementation",
+            "active": true
         }
     ],
     "projects": [
@@ -324,6 +335,131 @@
                         },
                         "then": {
                             "append_note": "📆 TIME-SENSITIVE: Due to temporal anomalies in the space-time continuum, all Friday tasks may spontaneously become Monday tasks. Please adjust your reality accordingly."
+                        }
+                    }
+                ]
+            },
+            "active": true
+        },
+        {
+            "id": "1211114458655267",
+            "name": "I Am Recovery",
+            "aliases": [
+                "iar",
+                "i am recovery",
+                "recovery"
+            ],
+            "type": "client",
+            "description": "Newly closed deal - currently in onboarding phase. Client implementation and go-live coordination.",
+            "owners": [
+                "atiwari@opusbehavioral.com",
+                "jhall@opusbehavioral.com"
+            ],
+            "stakeholders": {
+                "primary": [
+                    "jhall@opusbehavioral.com",
+                    "lgil@opusbehavioral.com"
+                ],
+                "secondary": [
+                    "atiwari@opusbehavioral.com"
+                ]
+            },
+            "allowed_assignees": [
+                "atiwari@opusbehavioral.com",
+                "jhall@opusbehavioral.com",
+                "dlacap@opusbehavioral.com",
+                "lgil@opusbehavioral.com"
+            ],
+            "sections": [
+                {
+                    "name": "Inbox",
+                    "id": "1211114528853976"
+                }
+            ],
+            "defaults": {
+                "section_id": "1211114528853976",
+                "due_days_from_now": 5
+            },
+            "custom_fields": [],
+            "routing_keywords": [
+                "iar",
+                "recovery",
+                "implementation",
+                "onboarding",
+                "go-live"
+            ],
+            "notes_guidance": "Include implementation status, client requirements, and any blockers. Reference onboarding timeline.",
+            "context": {
+                "summary": "I Am Recovery - Newly closed deal by Adi. Currently in onboarding phase with target go-live to be determined. Laura Gil is the lead onboarding specialist.",
+                "primary_contact": {
+                    "name": "Laura Gil",
+                    "email": "lgil@opusbehavioral.com",
+                    "role": "Onboarding Specialist"
+                },
+                "email_policy": {
+                    "always_cc": [],
+                    "bcc_never": true,
+                    "signature_hint": "Professional and supportive tone for new client relationship."
+                },
+                "task_guidance": {
+                    "title_rules": [
+                        "Include 'IAR' or client name for visibility",
+                        "Specify deliverable and owner",
+                        "Reference implementation phase when applicable"
+                    ],
+                    "notes_template": "Client: I Am Recovery\nPhase: Onboarding\nObjective: {objective}\nDeliverables: {deliverables}\nDependencies: {dependencies}\nTarget Date: {date}\nOwner: {owner}"
+                },
+                "sla": {
+                    "default_due_days_from_now": 5,
+                    "escalation_contact": "atiwari@opusbehavioral.com"
+                },
+                "rules": [
+                    {
+                        "when": {
+                            "contains_any": [
+                                "contract",
+                                "signature",
+                                "agreement"
+                            ]
+                        },
+                        "then": {
+                            "append_note": "Ensure all legal documents are reviewed and stored in appropriate system. CC legal if required."
+                        }
+                    },
+                    {
+                        "when": {
+                            "contains_any": [
+                                "kickoff",
+                                "introduction",
+                                "meet"
+                            ]
+                        },
+                        "then": {
+                            "append_note": "Include agenda, attendee list, and clear objectives. Send calendar invite with Zoom/Teams link."
+                        }
+                    },
+                    {
+                        "when": {
+                            "contains_any": [
+                                "training",
+                                "configuration",
+                                "setup"
+                            ]
+                        },
+                        "then": {
+                            "append_note": "Document requirements, timeline, and success criteria. Coordinate with implementation team."
+                        }
+                    },
+                    {
+                        "when": {
+                            "contains_any": [
+                                "go-live",
+                                "launch",
+                                "migration"
+                            ]
+                        },
+                        "then": {
+                            "append_note": "Create detailed checklist, identify risks, and ensure all stakeholders are aligned on timeline."
                         }
                     }
                 ]
