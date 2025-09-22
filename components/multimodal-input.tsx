@@ -105,6 +105,7 @@ function PureMultimodalInput({
     'input',
     '',
   );
+  const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -249,12 +250,54 @@ function PureMultimodalInput({
         className="-top-4 -left-4 pointer-events-none fixed size-0.5 opacity-0"
         ref={fileInputRef}
         multiple
+        accept="image/jpeg,image/png,application/pdf"
         onChange={handleFileChange}
         tabIndex={-1}
       />
 
       <PromptInput
-        className="p-3 rounded-xl border transition-all duration-200 border-border bg-background shadow-xs focus-within:border-border hover:border-muted-foreground/50"
+        className={`relative p-3 rounded-xl border transition-all duration-200 border-border bg-background shadow-xs focus-within:border-border hover:border-muted-foreground/50 ${
+          isDragging ? 'border-primary bg-primary/5' : ''
+        }`}
+        onDrop={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setIsDragging(false);
+
+          const files = Array.from(e.dataTransfer.files).filter((file) => {
+            const isValid = ['image/jpeg', 'image/png', 'application/pdf'].includes(file.type);
+            if (!isValid) {
+              toast.error(`File type not supported: ${file.name}`);
+            }
+            return isValid;
+          });
+
+          if (files.length > 0) {
+            const dataTransfer = new DataTransfer();
+            files.forEach((file) => dataTransfer.items.add(file));
+            if (fileInputRef.current) {
+              fileInputRef.current.files = dataTransfer.files;
+              const event = new Event('change', { bubbles: true });
+              fileInputRef.current.dispatchEvent(event);
+            }
+          }
+        }}
+        onDragOver={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        }}
+        onDragEnter={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setIsDragging(true);
+        }}
+        onDragLeave={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (e.currentTarget === e.target) {
+            setIsDragging(false);
+          }
+        }}
         onSubmit={(event) => {
           event.preventDefault();
           if (status !== 'ready') {
@@ -264,6 +307,11 @@ function PureMultimodalInput({
           }
         }}
       >
+        {isDragging && (
+          <div className="absolute inset-0 z-10 flex items-center justify-center rounded-xl bg-primary/10 backdrop-blur-[1px]">
+            <div className="text-primary font-medium">Drop files here (Images or PDFs)</div>
+          </div>
+        )}
         {(attachments.length > 0 || uploadQueue.length > 0) && (
           <div
             data-testid="attachments-preview"

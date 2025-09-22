@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git remote remove:*)",
+      "Bash(git remote add:*)",
+      "Bash(pnpm install:*)",
+      "Bash(git add:*)",
+      "Bash(git checkout:*)",
+      "Bash(npx tsc:*)",
+      "Bash(pnpm build:*)",
+      "Bash(pnpm db:generate:*)",
+      "WebSearch",
+      "WebFetch(domain:www.npmjs.com)",
+      "Bash(pnpm add:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

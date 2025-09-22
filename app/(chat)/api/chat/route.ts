@@ -44,6 +44,7 @@ import { fetchModels } from 'tokenlens/fetch';
 import { getUsage } from 'tokenlens/helpers';
 import type { ModelCatalog } from 'tokenlens/core';
 import type { AppUsage } from '@/lib/usage';
+import pdf from 'pdf-parse';
 
 export const maxDuration = 60;
 
@@ -64,6 +65,62 @@ const getTokenlensCatalog = cache(
   ['tokenlens-catalog'],
   { revalidate: 24 * 60 * 60 }, // 24 hours
 );
+
+async function extractPdfText(url: string): Promise<string | null> {
+  try {
+    console.log('[PDF] Starting PDF text extraction from URL:', url);
+    const response = await fetch(url);
+    if (!response.ok) {
+      console.error('[PDF] Failed to fetch PDF from URL:', url, 'Status:', response.status);
+      return null;
+    }
+
+    const arrayBuffer = await response.arrayBuffer();
+    console.log('[PDF] Downloaded PDF, size:', arrayBuffer.byteLength, 'bytes');
+
+    const buffer = Buffer.from(arrayBuffer);
+    const data = await pdf(buffer);
+
+    console.log('[PDF] Successfully extracted text from PDF');
+    console.log('[PDF] Pages:', data.numpages, 'Text length:', data.text?.length || 0);
+
+    return data.text;
+  } catch (error) {
+    console.error('[PDF] Error extracting PDF text:', error);
+    return null;
+  }
+}
+
+async function processMessageParts(message: ChatMessage): Promise<ChatMessage> {
+  console.log('[PDF] Processing message parts, total parts:', message.parts?.length || 0);
+
+  const processedParts = await Promise.all(
+    message.parts.map(async (part) => {
+      console.log('[PDF] Processing part:', { type: part.type, mediaType: (part as any).mediaType, name: (part as any).name });
+
+      if (part.type === 'file' && part.mediaType === 'application/pdf') {
+        console.log('[PDF] Found PDF attachment:', part.name);
+        const pdfText = await extractPdfText(part.url);
+        if (pdfText) {
+          console.log('[PDF] Successfully extracted text, creating text part');
+          return {
+            type: 'text' as const,
+            text: `[PDF Document: ${part.name}]\n\n${pdfText}\n\n[End of PDF Document]`,
+          };
+        } else {
+          console.error('[PDF] Failed to extract text from PDF:', part.name);
+        }
+      }
+      return part;
+    })
+  );
+
+  console.log('[PDF] Finished processing parts, returning processed message');
+  return {
+    ...message,
+    parts: processedParts,
+  };
+}
 
 export function getStreamContext() {
   if (!globalStreamContext) {
@@ -91,7 +148,8 @@ export async function POST(request: Request) {
   try {
     const json = await request.json();
     requestBody = postRequestBodySchema.parse(json);
-  } catch (_) {
+  } catch (error) {
+    console.error('[CHAT API] Failed to parse request body:', error);
     return new ChatSDKError('bad_request:api').toResponse();
   }
 
@@ -145,7 +203,15 @@ export async function POST(request: Request) {
     }
 
     const messagesFromDb = await getMessagesByChatId({ id });
-    const uiMessages = [...convertToUIMessages(messagesFromDb), message];
+
+    console.log('[CHAT API] Processing new message, ID:', message.id);
+    console.log('[CHAT API] Message parts before processing:', JSON.stringify(message.parts, null, 2));
+
+    const processedMessage = await processMessageParts(message);
+
+    console.log('[CHAT API] Message parts after processing:', JSON.stringify(processedMessage.parts, null, 2));
+
+    const uiMessages = [...convertToUIMessages(messagesFromDb), processedMessage];
 
     const { longitude, latitude, city, country } = geolocation(request);
 
@@ -297,7 +363,8 @@ export async function POST(request: Request) {
       return new ChatSDKError('bad_request:activate_gateway').toResponse();
     }
 
-    console.error('Unhandled error in chat API:', error);
+    console.error('[CHAT API] Unhandled error in chat API:', error);
+    console.error('[CHAT API] Error stack:', error instanceof Error ? error.stack : 'No stack trace');
     return new ChatSDKError('offline:chat').toResponse();
   }
 }

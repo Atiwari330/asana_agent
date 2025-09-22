@@ -1208,3 +1208,22 @@ export const WarningIcon = ({ size = 16 }: { size?: number }) => {
     </svg>
   );
 };
+
+export const FileTextIcon = ({ size = 16 }: { size?: number }) => {
+  return (
+    <svg
+      height={size}
+      width={size}
+      strokeLinejoin="round"
+      viewBox="0 0 16 16"
+      style={{ color: 'currentcolor' }}
+    >
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M2.5 1.75V14.25H13.5V5.56066L9.93933 2H2.5ZM1 1.75C1 0.921573 1.67157 0.25 2.5 0.25H9.93933C10.3368 0.25 10.7181 0.408035 11 0.689339L14.5607 4.25C14.8419 4.53125 15 4.91255 15 5.31066V14.25C15 15.0784 14.3284 15.75 13.5 15.75H2.5C1.67157 15.75 1 15.0784 1 14.25V1.75ZM4.75 7H11.25V8.5H4.75V7ZM4.75 10H11.25V11.5H4.75V10Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+};
