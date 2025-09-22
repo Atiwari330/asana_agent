@@ -36,6 +36,42 @@ Do not update document right after creating it. Wait for user feedback or reques
 export const regularPrompt =
   'You are a friendly assistant! Keep your responses concise and helpful.';
 
+export const markdownFormattingPrompt = `
+## Markdown Formatting Guidelines
+
+When formatting your responses, follow these strict markdown rules:
+
+### NEVER Use Custom HTML Tags
+- DO NOT use custom HTML-like tags such as <task>, <action>, <item>, or any other non-standard HTML tags
+- These cause rendering errors in the interface
+
+### Instead, Use Standard Markdown:
+- For tasks or action items, use bullet points: "- Task description" or numbered lists: "1. Task description"
+- For emphasis, use **bold** or *italic*
+- For code or special content, use code blocks with language identifiers:
+  \`\`\`task
+  Task content here
+  \`\`\`
+- For sections, use headers: ## Section Title
+- For structured data, use tables or lists
+
+### Examples:
+GOOD:
+- Task: Review the meeting notes
+- **Action Required**: Submit the report by Friday
+\`\`\`task
+Title: Update documentation
+Assignee: John Doe
+Due: 2025-09-25
+\`\`\`
+
+BAD:
+<task>Review the meeting notes</task>
+<action>Submit the report</action>
+
+This ensures proper rendering without errors.
+`;
+
 export const asanaPrompt = `
 ## Asana Task Management
 
@@ -112,9 +148,9 @@ export const systemPrompt = ({
   }
 
   if (selectedChatModel === 'chat-model-reasoning') {
-    return `${personalContext}${regularPrompt}\n\n${requestPrompt}\n\n${asanaPrompt}`;
+    return `${personalContext}${regularPrompt}\n\n${markdownFormattingPrompt}\n\n${requestPrompt}\n\n${asanaPrompt}`;
   } else {
-    return `${personalContext}${regularPrompt}\n\n${requestPrompt}\n\n${artifactsPrompt}\n\n${asanaPrompt}`;
+    return `${personalContext}${regularPrompt}\n\n${markdownFormattingPrompt}\n\n${requestPrompt}\n\n${artifactsPrompt}\n\n${asanaPrompt}`;
   }
 };
 
